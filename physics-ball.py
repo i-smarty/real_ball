@@ -1,12 +1,18 @@
 import tkinter
 from math import sqrt, sin, cos, pi
 
+
 def bump_ball(v, omega, phi):
     """
-    function that return v and omega after bump
+    Function that returns velocity v and angular velocity omega after bump by the wall with angle phi of slope
+
+    :param v: velocity
+    :param omega: angular velocity
+    :param phi: oriented angle from horizontal line to line of wall --- \measuredangle(horizontal_line, wall_line)
+    :return: new velocity and new angular velocity
     """
-    v_paral = v[0] * cos(phi) - v[1] * sin(phi) # parallel component of velocity
-    v_perp = v[0] * sin(phi) + v[1] * cos(phi) # perpendicular component of velocity
+    v_paral = v[0] * cos(phi) - v[1] * sin(phi)  # parallel to wall component of velocity
+    v_perp = v[0] * sin(phi) + v[1] * cos(phi)  # perpendicular to wall component of velocity
     
     if mu == 0:
         v_perp = - k * v_perp
@@ -78,21 +84,22 @@ def move_ball():
     
     canvas.after(30, move_ball)
 
+
 master = tkinter.Tk()
 
 # variables
-v = [6, -3] # initial velocity
-h = 800 # height of the canvas
-w = 1200 # width of the canvas
-omega = 0.7 # initial angular velocity
-g = 0.5 # acceleration of gravity
-mu = 1 # friction coefficient
-I = 0.6 # moment of inertia of the ball
-k = 0.98 # coefficient of recovery
+v = [6, -3]  # initial velocity
+h = 800  # height of the canvas
+w = 1200  # width of the canvas
+omega = 0.7  # initial angular velocity
+g = 0.5  # acceleration of gravity
+mu = 1  # friction coefficient
+I = 0.6  # moment of inertia of the ball
+k = 0.98  # coefficient of recovery
 
 
-R = 30 # radius of the ball
-r = 5 # radius of spot on the ball
+R = 30  # radius of the ball
+r = 5  # radius of spot on the ball
 
 master.title('Ball')
 master.minsize(800, 700)
