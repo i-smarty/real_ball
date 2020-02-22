@@ -8,22 +8,19 @@ def bump_ball(v, omega, phi):
     v_paral = v[0] * cos(phi) - v[1] * sin(phi) # parallel component of velocity
     v_perp = v[0] * sin(phi) + v[1] * cos(phi) # perpendicular component of velocity
     
-    if mu == 0:
+    dv_y = (v_paral - omega * 10) * I / (I + 1)
+    if abs(dv_y) <= abs(mu * (1 + k) * v_perp):
+        v_paral = v_paral - dv_y
+        omega += dv_y / I / 10
+        v_perp = - k * v_perp
+    elif dv_y > 0:
+        v_paral = v_paral - mu * (1 + k) * v_perp
+        omega += mu * (1 + k) * v_perp / I / 10
         v_perp = - k * v_perp
     else:
-        dv_y = (v_paral - omega * 10) * I / mu / (I + 1)
-        if abs(dv_y) <= abs((1 + k) * v_perp):
-            v_paral = v_paral - mu * dv_y
-            omega += mu * dv_y / I / 10
-            v_perp = - k * v_perp
-        elif dv_y > 0:
-            v_paral = v_paral - mu * (1 + k) * v_perp
-            omega += mu * (1 + k) * v_perp / I / 10
-            v_perp = - k * v_perp
-        else:
-            v_paral = v_paral + mu * (1 + k) * v_perp
-            omega -= mu * (1 + k) * v_perp / I / 10
-            v_perp = - k * v_perp
+        v_paral = v_paral + mu * (1 + k) * v_perp
+        omega -= mu * (1 + k) * v_perp / I / 10
+        v_perp = - k * v_perp
     
     v[0] = v_paral * cos(phi) + v_perp * sin(phi)
     v[1] = - v_paral * sin(phi) + v_perp * cos(phi)
@@ -86,7 +83,7 @@ h = 800 # height of the canvas
 w = 1200 # width of the canvas
 omega = 0.7 # initial angular velocity
 g = 0.5 # acceleration of gravity
-mu = 1 # friction coefficient
+mu = 1000 # friction coefficient
 I = 0.6 # moment of inertia of the ball
 k = 0.98 # coefficient of recovery
 
