@@ -14,22 +14,19 @@ def bump_ball(v, omega, phi):
     v_paral = v[0] * cos(phi) - v[1] * sin(phi)  # parallel to wall component of velocity
     v_perp = v[0] * sin(phi) + v[1] * cos(phi)  # perpendicular to wall component of velocity
     
-    if mu == 0:
+    dv_y = (v_paral - omega * 10) * I / (I + 1)
+    if abs(dv_y) <= abs(mu * (1 + k) * v_perp):
+        v_paral = v_paral - dv_y
+        omega += dv_y / I / 10
+        v_perp = - k * v_perp
+    elif dv_y > 0:
+        v_paral = v_paral - mu * (1 + k) * v_perp
+        omega += mu * (1 + k) * v_perp / I / 10
         v_perp = - k * v_perp
     else:
-        dv_y = (v_paral - omega * 10) * I / mu / (I + 1)
-        if abs(dv_y) <= abs((1 + k) * v_perp):
-            v_paral = v_paral - mu * dv_y
-            omega += mu * dv_y / I / 10
-            v_perp = - k * v_perp
-        elif dv_y > 0:
-            v_paral = v_paral - mu * (1 + k) * v_perp
-            omega += mu * (1 + k) * v_perp / I / 10
-            v_perp = - k * v_perp
-        else:
-            v_paral = v_paral + mu * (1 + k) * v_perp
-            omega -= mu * (1 + k) * v_perp / I / 10
-            v_perp = - k * v_perp
+        v_paral = v_paral + mu * (1 + k) * v_perp
+        omega -= mu * (1 + k) * v_perp / I / 10
+        v_perp = - k * v_perp
     
     v[0] = v_paral * cos(phi) + v_perp * sin(phi)
     v[1] = - v_paral * sin(phi) + v_perp * cos(phi)
