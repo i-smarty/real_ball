@@ -4,33 +4,34 @@ from math import sqrt, sin, cos, pi
 
 def bump_ball(v, omega, phi):
     """
-    Function that returns velocity v and angular velocity omega after bump by the wall with angle phi of slope
+    Function that returns velocity v and angular velocity omega after bump by the wall with angle phi of slope.
 
     :param v: velocity
     :param omega: angular velocity
     :param phi: oriented angle from horizontal line to line of wall --- \measuredangle(horizontal_line, wall_line)
     :return: new velocity and new angular velocity
     """
-    v_paral = v[0] * cos(phi) - v[1] * sin(phi)  # parallel to wall component of velocity
-    v_perp = v[0] * sin(phi) + v[1] * cos(phi)  # perpendicular to wall component of velocity
-    
-    dv_y = (v_paral - omega * 10) * I / (I + 1)
-    if abs(dv_y) <= abs(mu * (1 + k) * v_perp):
-        v_paral = v_paral - dv_y
-        omega += dv_y / I / 10
-        v_perp = - k * v_perp
-    elif dv_y > 0:
-        v_paral = v_paral - mu * (1 + k) * v_perp
-        omega += mu * (1 + k) * v_perp / I / 10
-        v_perp = - k * v_perp
+    v_perp = v[0] * cos(-phi) - v[1] * sin(-phi)  # parallel to wall component of velocity
+    v_paral = v[0] * sin(-phi) + v[1] * cos(-phi)  # perpendicular to wall component of velocity
+
+    if v_perp <= 0:
+        return v, omega
+
+    P = v_perp * (1 + k) * mu
+    v_paral_bal = (R ** 2 * v_paral + I * -omega * R) / (R ** 2 + I)
+    Q = abs(v_paral - v_paral_bal)
+    if P >= Q:
+        v_paral = v_paral_bal
+        omega = -v_paral_bal / R
     else:
-        v_paral = v_paral + mu * (1 + k) * v_perp
-        omega -= mu * (1 + k) * v_perp / I / 10
-        v_perp = - k * v_perp
-    
-    v[0] = v_paral * cos(phi) + v_perp * sin(phi)
-    v[1] = - v_paral * sin(phi) + v_perp * cos(phi)
-    return (v, omega)
+        dv_paral = (v_paral_bal - v_paral) * P / Q
+        v_paral += dv_paral
+        omega += dv_paral * R / I
+    v_perp *= -k
+
+    v[0] = v_perp * cos(phi) - v_paral * sin(phi)
+    v[1] = v_perp * sin(phi) + v_paral * cos(phi)
+    return v, omega
     
     
 def move_ball():
@@ -43,19 +44,19 @@ def move_ball():
     canvas.move(spot, v[0], v[1])
     canvas.move(spot, omega * (canvas.coords(ball)[1] + R - canvas.coords(spot)[1] - r), omega * (canvas.coords(spot)[0] + r - canvas.coords(ball)[0] - R))
     if canvas.coords(ball)[0] <= 0:
-        v, omega = bump_ball(v, omega, -pi/2) 
+        v, omega = bump_ball(v, omega, pi)
         canvas.move(ball, -canvas.coords(ball)[0], 0)
         grav = False
     elif canvas.coords(ball)[2] >= w:
-        v, omega = bump_ball(v, omega, pi/2) 
+        v, omega = bump_ball(v, omega, 0)
         canvas.move(ball, w - canvas.coords(ball)[2], 0)
         grav = False
     if canvas.coords(ball)[1] <= 0:
-        v, omega = bump_ball(v, omega, pi) 
+        v, omega = bump_ball(v, omega, -pi/2)
         canvas.move(ball, 0, -canvas.coords(ball)[1])
         grav = False
     elif canvas.coords(ball)[3] >= h:
-        v, omega = bump_ball(v, omega, 0) 
+        v, omega = bump_ball(v, omega, pi/2)
         canvas.move(ball, 0, h - canvas.coords(ball)[3])
         grav = False
     
