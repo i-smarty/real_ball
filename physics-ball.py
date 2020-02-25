@@ -8,7 +8,7 @@ def bump_ball(v, omega, phi):
 
     :param v: velocity
     :param omega: angular velocity
-    :param phi: oriented angle from horizontal line to line of wall --- \measuredangle(horizontal_line, wall_line)
+    :param phi: oriented angle from vector (1; 0) to vector from center to bump point --- \measuredangle(horizontal_line, wall_line)
     :return: new velocity and new angular velocity
     """
     v_perp = v[0] * cos(-phi) - v[1] * sin(-phi)  # parallel to wall component of velocity
@@ -17,9 +17,9 @@ def bump_ball(v, omega, phi):
     if v_perp <= 0:
         return v, omega
 
-    P = v_perp * (1 + k) * mu
-    v_paral_bal = (R ** 2 * v_paral + I * -omega * R) / (R ** 2 + I)
-    Q = abs(v_paral - v_paral_bal)
+    P = v_perp * m * (1 + k) * mu
+    v_paral_bal = (m * R ** 2 * v_paral + I * -omega * R) / (m * R ** 2 + I)
+    Q = abs(v_paral - v_paral_bal) * m
     if P >= Q:
         v_paral = v_paral_bal
         omega = -v_paral_bal / R
@@ -38,7 +38,7 @@ def move_ball():
     """
     function that moves ball every 30 ms
     """
-    global omega, v, v_y0, h_0
+    global omega, v
     grav = True
     canvas.move(ball, v[0], v[1])
     canvas.move(spot, v[0], v[1])
@@ -86,18 +86,18 @@ def move_ball():
 master = tkinter.Tk()
 
 # variables
-v = [6, -3]  # initial velocity
-h = 800  # height of the canvas
-w = 1200  # width of the canvas
-omega = 0.7  # initial angular velocity
-g = 0.5  # acceleration of gravity
-mu = 1  # friction coefficient
-I = 0.6  # moment of inertia of the ball
-k = 0.98  # coefficient of recovery
-
-
 R = 30  # radius of the ball
 r = 5  # radius of spot on the ball
+m = 1  # mass of the ball
+I = 0.4 * m * R ** 2  # moment of inertia of the ball
+v = [3, -20]  # initial velocity
+omega = 0.7  # initial angular velocity
+g = 1  # acceleration of gravity
+mu = 1  # friction coefficient
+k = 0.98  # coefficient of recovery
+
+h = 800  # height of the canvas
+w = 1200  # width of the canvas
 
 master.title('Ball')
 master.minsize(800, 700)
@@ -106,8 +106,6 @@ canvas = tkinter.Canvas(master, bg = 'green', height = h, width = w)
 
 ball_pos = (210, 200) # initial position of ball
 ball = canvas.create_oval((ball_pos[0], ball_pos[1]), (ball_pos[0] + 2 * R, ball_pos[1] + 2 * R), fill='white')
-h_0 = canvas.coords(ball)[1]
-v_y0 = v[1]
 spot_pos = (ball_pos[0] + R, ball_pos[1] + r)
 spot = canvas.create_oval((spot_pos[0] - r, spot_pos[1] - r), (spot_pos[0] + r, spot_pos[1] + r), fill='red')
 
