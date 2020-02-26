@@ -1,6 +1,82 @@
 import tkinter
 from math import sqrt, sin, cos, pi
 
+class Wall:
+    def __init__(self, x_0, y_0, x_1, y_1):
+        self._x_0 = x_0
+        self._y_0 = y_0
+        self._x_1 = x_1
+        self._y_1 = y_1
+    
+    @property
+    def x_0(self):
+        return self._x_0
+    
+    @property
+    def y_0(self):
+        return self._y_0
+    
+    @property
+    def x_1(self):
+        return self._x_1
+    
+    @property
+    def y_1(self):
+        return self._y_1
+
+class Ball:
+    def __init__(self, canvas_fig, R, r, m, I, v, omega, g, mu, k):
+        self._R = R
+        self._r = r
+        self._m = m
+        self._I = I
+        self._v = v
+        self._omega = omega
+        self._g = g
+        self._mu = mu
+        self._k = k
+        self._canvas_fig = canvas_fig
+    
+    @property
+    def R(self):
+        return self._R
+    
+    @property
+    def r(self):
+        return self._r
+    
+    @property
+    def m(self):
+        return self._m
+    
+    @property
+    def I(self):
+        return self._I
+    
+    @property
+    def v(self):
+        return self._v
+    
+    @property
+    def omega(self):
+        return self._omega
+    
+    @property
+    def g(self):
+        return self._g
+    
+    @property
+    def mu(self):
+        return self._mu
+    
+    @property
+    def k(self):
+        return self._k
+    
+    @property
+    def canvas_fig(self):
+        return self._canvas_fig
+
 
 def bump_ball(v, omega, phi):
     """
@@ -11,8 +87,8 @@ def bump_ball(v, omega, phi):
     :param phi: oriented angle from vector (1; 0) to vector from center to bump point --- \measuredangle(horizontal_line, wall_line)
     :return: new velocity and new angular velocity
     """
-    v_perp = v[0] * cos(-phi) - v[1] * sin(-phi)  # parallel to wall component of velocity
-    v_paral = v[0] * sin(-phi) + v[1] * cos(-phi)  # perpendicular to wall component of velocity
+    v_perp = v[0] * cos(-phi) - v[1] * sin(-phi)  # perpendicular to wall component of velocity
+    v_paral = v[0] * sin(-phi) + v[1] * cos(-phi)  # parallel to wall component of velocity
 
     if v_perp <= 0:
         return v, omega
@@ -94,7 +170,7 @@ v = [0, 0]  # initial velocity
 omega = -0.7  # initial angular velocity
 g = 1  # acceleration of gravity
 mu = 1  # friction coefficient
-k = 0.98  # coefficient of recovery
+k = 0.95  # coefficient of recovery
 
 h = 800  # height of the canvas
 w = 1200  # width of the canvas
@@ -104,8 +180,9 @@ master.minsize(800, 700)
 
 canvas = tkinter.Canvas(master, bg = 'green', height = h, width = w)
 
-ball_pos = (210, 200) # initial position of ball
+ball_pos = (200, 200) # initial position of ball
 ball = canvas.create_oval((ball_pos[0], ball_pos[1]), (ball_pos[0] + 2 * R, ball_pos[1] + 2 * R), fill='white')
+_ball = Ball(ball, R, r, m, I, v, omega, g, mu, k)
 spot_pos = (ball_pos[0] + R, ball_pos[1] + r)
 spot = canvas.create_oval((spot_pos[0] - r, spot_pos[1] - r), (spot_pos[0] + r, spot_pos[1] + r), fill='red')
 
