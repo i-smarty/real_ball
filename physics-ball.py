@@ -26,7 +26,7 @@ def bump_ball(v, omega, phi):
     else:
         dv_paral = (v_paral_bal - v_paral) * P / Q
         v_paral += dv_paral
-        omega += dv_paral * R / I
+        omega += dv_paral * m * R / I
     v_perp *= -k
 
     v[0] = v_perp * cos(phi) - v_paral * sin(phi)
@@ -34,7 +34,7 @@ def bump_ball(v, omega, phi):
     return v, omega
     
     
-def move_ball():
+def redraw_ball():
     """
     function that moves ball every 30 ms
     """
@@ -80,7 +80,7 @@ def move_ball():
     #elif v[1] < -2 * g:
         #v[1] = -sqrt(v_y0 ** 2 + 2 * g * (h_1 - h_0))
     
-    canvas.after(30, move_ball)
+    canvas.after(30, redraw_ball)
 
 
 master = tkinter.Tk()
@@ -90,8 +90,8 @@ R = 30  # radius of the ball
 r = 5  # radius of spot on the ball
 m = 1  # mass of the ball
 I = 0.4 * m * R ** 2  # moment of inertia of the ball
-v = [3, -20]  # initial velocity
-omega = 0.7  # initial angular velocity
+v = [0, 0]  # initial velocity
+omega = -0.7  # initial angular velocity
 g = 1  # acceleration of gravity
 mu = 1  # friction coefficient
 k = 0.98  # coefficient of recovery
@@ -110,5 +110,5 @@ spot_pos = (ball_pos[0] + R, ball_pos[1] + r)
 spot = canvas.create_oval((spot_pos[0] - r, spot_pos[1] - r), (spot_pos[0] + r, spot_pos[1] + r), fill='red')
 
 canvas.pack()
-move_ball()
+redraw_ball()
 master.mainloop()
