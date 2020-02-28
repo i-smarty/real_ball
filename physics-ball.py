@@ -10,7 +10,7 @@ def bump_ball(ball, phi):
 
     :param v: velocity
     :param omega: angular velocity
-    :param phi: oriented angle from vector (1; 0) to vector from center to bump point --- \measuredangle(horizontal_line, wall_line)
+    :param phi: oriented angle from a vector (1; 0) to vector from center to bump point --- \\measuredangle(horizontal_line, wall_line)
     :return: new velocity and new angular velocity
     """
     R = ball.R
@@ -52,9 +52,6 @@ def redraw_ball():
     grav = True
     ball.move(ball.v[0], ball.v[1])
     ball.rotate(ball.omega)
-    # canvas.move(ball._canvas_spot,
-    #             ball.omega * (ball.y_spot - canvas.coords(ball._canvas_spot)[1] - ball.r),
-    #             ball.omega * (canvas.coords(ball._canvas_spot)[0] + ball.r - ball.x_spot))
     if ball.x <= ball.R:
         bump_ball(ball, pi)
         ball.move(-(ball.x - ball.R), 0)
@@ -71,13 +68,6 @@ def redraw_ball():
         bump_ball(ball, pi/2)
         ball.move(0, h - (ball.y + ball.R))
         grav = False
-    
-    # spot_x = ball.x_spot
-    # spot_y = ball.y_spot
-    # ball_x = ball.x
-    # ball_y = ball.y
-    # alpha = (ball.R - ball.r) / sqrt((spot_x - ball_x) ** 2 + (spot_y - ball_y) ** 2)
-    # canvas.move(ball._canvas_spot, -(spot_x - ball_x) * (1 - alpha), -(spot_y - ball_y) * (1 - alpha))
     
     if grav:
         ball.v[1] += ball.g
@@ -119,9 +109,13 @@ ball = Ball(x=200,
             mu=1,  # friction coefficient
             k=0.95,  # coefficient of recovery
             canvas=canvas)
-# ball = canvas.create_oval((ball_pos[0], ball_pos[1]), (ball_pos[0] + 2 * R, ball_pos[1] + 2 * R), fill='white')
-# spot_pos = (ball_pos[0] + R, ball_pos[1] + r)
-# spot = canvas.create_oval((spot_pos[0] - r, spot_pos[1] - r), (spot_pos[0] + r, spot_pos[1] + r), fill='red')
+
+wall_list = [
+    Wall(0, 0, w, 0),
+    Wall(0, 0, 0, h),
+    Wall(0, h, w, h),
+    Wall(w, 0, w, h)
+]
 
 canvas.pack()
 redraw_ball()
