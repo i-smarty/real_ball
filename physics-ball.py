@@ -1,5 +1,5 @@
 import tkinter
-from math import sqrt, sin, cos, pi
+from math import pi
 from Wall import Wall
 from Ball import Ball
     

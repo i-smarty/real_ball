@@ -1,6 +1,3 @@
-from math import sin, cos
-
-
 class System:
     def __init__(self, wall_list, ball_list):
         self.wall_list = wall_list
