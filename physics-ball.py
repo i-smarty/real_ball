@@ -27,14 +27,14 @@ def bump_ball(ball, phi):
     if v_perp <= 0:
         return
 
-    P = v_perp * m * (1 + k) * mu
+    L_got = v_perp * m * (1 + k) * mu
     v_paral_bal = (m * R ** 2 * v_paral + I * -omega * R) / (m * R ** 2 + I)
-    Q = abs(v_paral - v_paral_bal) * m
-    if P >= Q:
+    L_needed = abs(v_paral - v_paral_bal) * m
+    if L_got >= L_needed:
         v_paral = v_paral_bal
         omega = -v_paral_bal / R
     else:
-        dv_paral = (v_paral_bal - v_paral) * P / Q
+        dv_paral = (v_paral_bal - v_paral) * L_got / L_needed
         v_paral += dv_paral
         omega += dv_paral * m * R / I
     v_perp *= -k
@@ -82,15 +82,15 @@ def redraw_ball():
     if grav:
         ball.v[1] += ball.g
     
-    #if not grav:
-        #h_0 = canvas.coords(ball)[1] 
-        #v_y0 = v[1]
+    # if not grav:
+    #     h_0 = canvas.coords(ball)[1]
+    #     v_y0 = v[1]
     
-    #h_1 = canvas.coords(ball)[1] 
-    #if v[1] > 2 * g:
-        #v[1] = sqrt(v_y0 ** 2 + 2 * g * (h_1 - h_0))
-    #elif v[1] < -2 * g:
-        #v[1] = -sqrt(v_y0 ** 2 + 2 * g * (h_1 - h_0))
+    # h_1 = canvas.coords(ball)[1]
+    # if v[1] > 2 * g:
+    #     v[1] = sqrt(v_y0 ** 2 + 2 * g * (h_1 - h_0))
+    # elif v[1] < -2 * g:
+    #     v[1] = -sqrt(v_y0 ** 2 + 2 * g * (h_1 - h_0))
     
     canvas.after(30, redraw_ball)
 
@@ -112,7 +112,7 @@ ball = Ball(x=200,
             r=5,  # radius of spot on the ball
             alpha=0,
             m=1,  # mass of the ball
-            I=0.4 * 1 * 30 ** 2, # moment of inertia of the ball
+            I=0.4 * 1 * 30 ** 2,  # moment of inertia of the ball
             v=[0, 0],  # initial velocity
             omega=-0.7,  # initial angular velocity
             g=1,  # acceleration of gravity
