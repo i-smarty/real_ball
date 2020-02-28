@@ -51,7 +51,7 @@ def redraw_ball():
     """
     grav = True
     ball.move(ball.v[0], ball.v[1])
-    # ball.rotate(ball.omega)
+    ball.rotate(ball.omega)
     # canvas.move(ball._canvas_spot,
     #             ball.omega * (ball.y_spot - canvas.coords(ball._canvas_spot)[1] - ball.r),
     #             ball.omega * (canvas.coords(ball._canvas_spot)[0] + ball.r - ball.x_spot))
