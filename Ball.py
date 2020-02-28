@@ -2,7 +2,7 @@ from math import sin, cos
 
 
 class Ball:
-    def __init__(self, x, y, R, r, alpha, m, I, v, omega, g, mu, k, canvas):
+    def __init__(self, x, y, R, r, alpha, m, I, v, omega, g, canvas):
         self._x = x
         self._y = y
         self._x_spot = x + cos(alpha) * (R - r)
@@ -15,8 +15,6 @@ class Ball:
         self._v = v
         self._omega = omega
         self._g = g
-        self._mu = mu
-        self._k = k
         self._canvas = canvas
         self._canvas_ball = canvas.create_oval((self._x - R, self._y - R),
                                                (self._x + R, self._y + R), fill='white')
@@ -99,33 +97,62 @@ class Ball:
     def g(self):
         return self._g
 
-    @property
-    def mu(self):
-        return self._mu
-
-    @property
-    def k(self):
-        return self._k
-
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
         self.x_spot += dx
         self.y_spot += dy
-        self._canvas.move(self._canvas_ball, dx, dy)
-        self._canvas.move(self._canvas_spot, dx, dy)
-        # self._canvas.coords(self._canvas_ball,
-        #                     self.x - self.R, self.y - self.R,
-        #                     self.x + self.R, self.y + self.R)
-        # self._canvas.coords(self._canvas_spot,
-        #                     self.x_spot - self.r, self.y_spot - self.r,
-        #                     self.x_spot + self.r, self.y_spot + self.r)
 
     def rotate(self, phi):
         self.alpha += phi
         alpha = self.alpha
-        x_spot_old = self.x_spot
-        y_spot_old = self.y_spot
         self.x_spot = self.x + cos(alpha) * (self.R - self.r)
         self.y_spot = self.y + sin(alpha) * (self.R - self.r)
-        self._canvas.move(self._canvas_spot, self.x_spot - x_spot_old, self.y_spot - y_spot_old)
+
+    def redraw(self):
+        self._canvas.coords(self._canvas_ball,
+                            self.x - self.R, self.y - self.R,
+                            self.x + self.R, self.y + self.R)
+        self._canvas.coords(self._canvas_spot,
+                            self.x_spot - self.r, self.y_spot - self.r,
+                            self.x_spot + self.r, self.y_spot + self.r)
+
+    def bump(self, phi, k, mu):
+        """
+        Function that recomputes velocity $v$ and angular velocity $\\omega$ after bump by the wall in the direction
+        $e^{i \\phi}$ from center.
+
+        :param phi: an oriented angle of direction of bump
+        :param k: coefficient of recovery
+        :param mu: friction coefficient
+        :return: None
+        """
+
+        R = self.R
+        m = self.m
+        I = self.I
+        v = self.v
+        omega = self.omega
+
+        v_perp = v[0] * cos(-phi) - v[1] * sin(-phi)  # perpendicular to wall component of velocity
+        v_paral = v[0] * sin(-phi) + v[1] * cos(-phi)  # parallel to wall component of velocity
+
+        if v_perp <= 0:
+            return
+
+        L_got = v_perp * m * (1 + k) * mu
+        v_paral_bal = (m * R ** 2 * v_paral + I * -omega * R) / (m * R ** 2 + I)
+        L_needed = abs(v_paral - v_paral_bal) * m
+        if L_got >= L_needed:
+            v_paral = v_paral_bal
+            omega = -v_paral_bal / R
+        else:
+            dv_paral = (v_paral_bal - v_paral) * L_got / L_needed
+            v_paral += dv_paral
+            omega += dv_paral * m * R / I
+        v_perp *= -k
+
+        v[0] = v_perp * cos(phi) - v_paral * sin(phi)
+        v[1] = v_perp * sin(phi) + v_paral * cos(phi)
+        self.v = v
+        self.omega = omega
