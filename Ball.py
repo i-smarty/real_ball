@@ -110,8 +110,16 @@ class Ball:
     def move(self, dx, dy):
         self.x += dx
         self.y += dy
+        self.x_spot += dx
+        self.y_spot += dy
         self._canvas.move(self._canvas_ball, dx, dy)
         self._canvas.move(self._canvas_spot, dx, dy)
+        # self._canvas.coords(self._canvas_ball,
+        #                     self.x - self.R, self.y - self.R,
+        #                     self.x + self.R, self.y + self.R)
+        # self._canvas.coords(self._canvas_spot,
+        #                     self.x_spot - self.r, self.y_spot - self.r,
+        #                     self.x_spot + self.r, self.y_spot + self.r)
 
     def rotate(self, phi):
         self.alpha += phi
