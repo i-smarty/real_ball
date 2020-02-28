@@ -1,4 +1,5 @@
 from math import sin, cos
+from warnings import warn
 
 
 class Ball:
@@ -138,6 +139,7 @@ class Ball:
         v_paral = v[0] * sin(-phi) + v[1] * cos(-phi)  # parallel to wall component of velocity
 
         if v_perp <= 0:
+            warn("Ball.bump was called in not bumping situation", RuntimeWarning)
             return
 
         L_got = v_perp * m * (1 + k) * mu
