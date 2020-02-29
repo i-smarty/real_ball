@@ -39,6 +39,10 @@ class Ball:
         self._y = new_y
 
     @property
+    def coords(self):
+        return [self.x, self.y]
+
+    @property
     def x_spot(self):
         return self._x_spot
 
