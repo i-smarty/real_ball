@@ -142,14 +142,14 @@ class Ball:
             warn("Ball.bump was called in not bumping situation", RuntimeWarning)
             return
 
-        L_got = v_perp * m * (1 + k) * mu
+        p_got = v_perp * m * (1 + k) * mu
         v_paral_bal = (m * R ** 2 * v_paral + I * -omega * R) / (m * R ** 2 + I)
-        L_needed = abs(v_paral - v_paral_bal) * m
-        if L_got >= L_needed:
+        p_needed = abs(v_paral - v_paral_bal) * m
+        if p_got >= p_needed:
             v_paral = v_paral_bal
             omega = -v_paral_bal / R
         else:
-            dv_paral = (v_paral_bal - v_paral) * L_got / L_needed
+            dv_paral = (v_paral_bal - v_paral) * p_got / p_needed
             v_paral += dv_paral
             omega += dv_paral * m * R / I
         v_perp *= -k
