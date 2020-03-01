@@ -29,6 +29,7 @@ def will_ball_bump_line(ball, x_0, y_0, x_1, y_1, dt):
 
     if (bx - x_0) * dy - (by - y_0) * dx < RL:
         warn("will_ball_bump_line was called in intersection situation", RuntimeWarning)
+        return True
 
     A = (ax * dy - ay * dx) / 2
     B = (vx * dy - vy * dx)
@@ -60,6 +61,7 @@ def when_ball_bump_line(ball, x_0, y_0, x_1, y_1):
 
     if (bx - x_0) * dy - (by - y_0) * dx < RL:
         warn("will_ball_bump_line was called in intersection situation", RuntimeWarning)
+        return 0
 
     A = (ax * dy - ay * dx) / 2
     B = (vx * dy - vy * dx)
