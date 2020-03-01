@@ -36,12 +36,12 @@ def will_ball_bump_line(ball, x_0, y_0, x_1, y_1, dt):
     C = ((bx - x_0) * dy - (by - y_0) * dx) - RL
     if A != 0:
         t = -B / (2 * A)
-        if C > 0 and (A * t ** 2 + B * t + C) > 0 and (A * dt ** 2 + B * dt + C) > 0:
+        if C >= 0 and (A * t ** 2 + B * t + C) >= 0 and (A * dt ** 2 + B * dt + C) >= 0:
             return False
         else:
             return True
     else:
-        if C > 0 and (A * dt ** 2 + B * dt + C) > 0:
+        if C >= 0 and (A * dt ** 2 + B * dt + C) >= 0:
             return False
         else:
             return True
@@ -88,6 +88,29 @@ def when_ball_bump_line(ball, x_0, y_0, x_1, y_1):
             if C == 0:
                 return 0
             return None
+
+
+def reflect_ball_by_line(ball, x_0, y_0, x_1, y_1):
+    dx, dy = x_1 - x_0, y_1 - y_0
+    bx, by = ball.coords
+    s = bx * dx + by * dy
+    t = (2 * x_0 - bx) * dy - (2 * y_0 - by) * dx
+    ball.move((s * dx + t * dy) / (dx ** 2 + dy ** 2) - bx,
+              (s * dy - t * dx) / (dx ** 2 + dy ** 2) - by)
+
+
+def how_ball_bump_line(ball, x_0, y_0, x_1, y_1):
+    dx, dy = x_1 - x_0, y_1 - y_0
+    dx, dy = dy, -dx
+
+    if dx * (ball.x - x_0) + dy * (ball.y - y_0) > 0:
+        dx, dy = -dx, -dy
+
+    L = (dx ** 2 + dy ** 2) ** 0.5
+    dx /= L
+    dy /= L
+
+    return dx, dy
 
 
 class FaKeBaLl:
