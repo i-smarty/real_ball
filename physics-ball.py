@@ -94,7 +94,7 @@ wall_list = [
     Wall(100, 100, 100, h - 100, canvas),
     Wall(100, h - 100, w - 100, h - 100, canvas),
     Wall(w - 100, 100, w - 100, h - 100, canvas),
-    # Wall(w / 2, h - 100, 100, h / 2, canvas)
+    Wall(w / 2, h - 100, 100, h / 2, canvas)
 ]
 
 my_sys = System(wall_list, [alone_ball], k, mu, 1, canvas)

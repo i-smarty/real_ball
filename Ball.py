@@ -3,7 +3,7 @@ from warnings import warn
 
 
 class Ball:
-    def __init__(self, x, y, R, r, alpha, m, I, v, omega, g, canvas):
+    def __init__(self, x, y, R, r, alpha, m, I, v, omega, g, canvas, ball_canvas_args={}, spot_canvas_args={}):
         self._x = x
         self._y = y
         self._x_spot = x + cos(alpha) * (R - r)
@@ -17,10 +17,14 @@ class Ball:
         self._omega = omega
         self._g = g
         self._canvas = canvas
+        BCA = {"fill": "white"}
+        BCA.update(ball_canvas_args)
+        SPA = {"fill": "red"}
+        SPA.update(spot_canvas_args)
         self._canvas_ball = canvas.create_oval((self._x - R, self._y - R),
-                                               (self._x + R, self._y + R), fill='white')
+                                               (self._x + R, self._y + R), **BCA)
         self._canvas_spot = canvas.create_oval((self._x_spot - r, self._y_spot - r),
-                                               (self._x_spot + r, self._y_spot + r), fill='red')
+                                               (self._x_spot + r, self._y_spot + r), SPA)
 
     @property
     def x(self):

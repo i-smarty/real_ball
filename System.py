@@ -39,12 +39,12 @@ class System:
 
             bump = False
 
-            print(ball.coords, ball.v, ball.g, ball.omega)
+            # print(ball.coords, ball.v, ball.g, ball.omega)
 
             for wall in self.wall_list:
                 if will_ball_bump_line(ball, wall.x_0, wall.y_0, wall.x_1, wall.y_1, dt):
                     direct = how_ball_bump_line(ball, wall.x_0, wall.y_0, wall.x_1, wall.y_1)
-                    print(wall.x_0, wall.y_0, wall.x_1, wall.y_1, dt, direct)
+                    # print(wall.x_0, wall.y_0, wall.x_1, wall.y_1, dt, direct)
                     ball.move(ball.v[0], ball.v[1])
                     ball.rotate(ball.omega)
                     ball.bump(*direct, self.k, self.mu)
@@ -53,7 +53,7 @@ class System:
                     bump = True
                     break
 
-            print()
+            # print()
 
             if not bump:
                 ball.move(ball.v[0], ball.v[1])
