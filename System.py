@@ -51,15 +51,16 @@ class System:
                     overstep = max((ball.x - wall.x_0) * direct[0] + (ball.y - wall.y_0) * direct[1] + ball.R, 0)
                     ball.move(-overstep * direct[0], -overstep * direct[1])
                     bump = True
-                    break
+                    # break
 
             # print()
 
             if not bump:
                 ball.move(ball.v[0], ball.v[1])
                 ball.rotate(ball.omega)
-                ball.v[0] += ball.g[0] * dt
-                ball.v[1] += ball.g[1] * dt
+
+            ball.v[0] += ball.g[0] * dt
+            ball.v[1] += ball.g[1] * dt
 
     def redraw(self):
         for ball in self.ball_list:
