@@ -3,7 +3,7 @@ from warnings import warn
 
 
 class Ball:
-    def __init__(self, x, y, R, r, alpha, m, I, v, omega, g, canvas):
+    def __init__(self, x, y, R, r, alpha, m, I, v, omega, g, canvas, ball_canvas_args={}, spot_canvas_args={}):
         self._x = x
         self._y = y
         self._x_spot = x + cos(alpha) * (R - r)
@@ -17,10 +17,14 @@ class Ball:
         self._omega = omega
         self._g = g
         self._canvas = canvas
+        BCA = {"fill": "white"}
+        BCA.update(ball_canvas_args)
+        SPA = {"fill": "red"}
+        SPA.update(spot_canvas_args)
         self._canvas_ball = canvas.create_oval((self._x - R, self._y - R),
-                                               (self._x + R, self._y + R), fill='white')
+                                               (self._x + R, self._y + R), **BCA)
         self._canvas_spot = canvas.create_oval((self._x_spot - r, self._y_spot - r),
-                                               (self._x_spot + r, self._y_spot + r), fill='red')
+                                               (self._x_spot + r, self._y_spot + r), SPA)
 
     @property
     def x(self):
@@ -37,6 +41,10 @@ class Ball:
     @y.setter
     def y(self, new_y):
         self._y = new_y
+
+    @property
+    def coords(self):
+        return [self.x, self.y]
 
     @property
     def x_spot(self):
@@ -118,7 +126,7 @@ class Ball:
                             self.x_spot - self.r, self.y_spot - self.r,
                             self.x_spot + self.r, self.y_spot + self.r)
 
-    def bump(self, phi, k, mu):
+    def bump(self, cos_phi, sin_phi, k, mu):
         """
         Function that recomputes velocity $v$ and angular velocity $\\omega$ after bump by the wall in the direction
         $e^{i \\phi}$ from center.
@@ -135,8 +143,8 @@ class Ball:
         v = self.v
         omega = self.omega
 
-        v_perp = v[0] * cos(-phi) - v[1] * sin(-phi)  # perpendicular to wall component of velocity
-        v_paral = v[0] * sin(-phi) + v[1] * cos(-phi)  # parallel to wall component of velocity
+        v_perp = v[0] * cos_phi + v[1] * sin_phi  # perpendicular to wall component of velocity
+        v_paral = -v[0] * sin_phi + v[1] * cos_phi  # parallel to wall component of velocity
 
         if v_perp <= 0:
             warn("Ball.bump was called in not bumping situation", RuntimeWarning)
@@ -154,7 +162,10 @@ class Ball:
             omega += dv_paral * m * R / I
         v_perp *= -k
 
-        v[0] = v_perp * cos(phi) - v_paral * sin(phi)
-        v[1] = v_perp * sin(phi) + v_paral * cos(phi)
+        v[0] = v_perp * cos_phi - v_paral * sin_phi
+        v[1] = v_perp * sin_phi + v_paral * cos_phi
         self.v = v
         self.omega = omega
+
+    def bump_angle(self, phi, k, mu):
+        self.bump(cos(phi), sin(phi), k, mu)

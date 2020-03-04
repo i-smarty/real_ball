@@ -2,6 +2,7 @@ import tkinter
 from math import pi
 from Wall import Wall
 from Ball import Ball
+from System import System
     
     
 def redraw_ball(ball):
@@ -11,21 +12,21 @@ def redraw_ball(ball):
     grav = True
     ball.move(ball.v[0], ball.v[1])
     ball.rotate(ball.omega)
-    if ball.x <= ball.R:
-        ball.bump(pi, k, mu)
-        ball.move(-(ball.x - ball.R), 0)
+    if ball.x <= ball.R + 100:
+        ball.bump_angle(pi, k, mu)
+        ball.move(-(ball.x - ball.R - 100), 0)
         grav = False
-    elif ball.x >= w - ball.R:
-        ball.bump(0, k, mu)
-        ball.move(w - (ball.x + ball.R), 0)
+    elif ball.x >= 1100 - ball.R:
+        ball.bump_angle(0, k, mu)
+        ball.move(1100 - (ball.x + ball.R), 0)
         grav = False
-    if ball.y <= ball.R:
-        ball.bump(-pi/2, k, mu)
-        ball.move(0, -(ball.y - ball.R))
+    if ball.y <= ball.R + 100:
+        ball.bump_angle(-pi/2, k, mu)
+        ball.move(0, -(ball.y - ball.R - 100))
         grav = False
-    elif ball.y >= h - ball.R:
-        ball.bump(pi/2, k, mu)
-        ball.move(0, h - (ball.y + ball.R))
+    elif ball.y >= 700 - ball.R:
+        ball.bump_angle(pi/2, k, mu)
+        ball.move(0, 700 - (ball.y + ball.R))
         grav = False
     
     if grav:
@@ -58,7 +59,7 @@ master.minsize(800, 700)
 canvas = tkinter.Canvas(master, bg='green', height=h, width=w)
 
 mu = 1  # friction coefficient
-k = 0.95  # coefficient of recovery
+k = 0.7  # coefficient of recovery
 
 alone_ball = Ball(
             x=200,  # initial position of ball
@@ -69,17 +70,36 @@ alone_ball = Ball(
             m=1,  # mass of the ball
             I=0.4 * 1 * 30 ** 2,  # moment of inertia of the ball
             v=[0, 0],  # initial velocity
-            omega=-0.7,  # initial angular velocity
+            omega=-0.2,  # initial angular velocity
             g=(0, 1),  # acceleration of gravity
             canvas=canvas)
 
+just_the_same_ball = Ball(
+            x=200,  # initial position of ball
+            y=200,
+            R=30,  # radius of the ball
+            r=5,  # radius of spot on the ball
+            alpha=0,
+            m=1,  # mass of the ball
+            I=0.4 * 1 * 30 ** 2,  # moment of inertia of the ball
+            v=[0, 0],  # initial velocity
+            omega=-0.2,  # initial angular velocity
+            g=(0, 1),  # acceleration of gravity
+            canvas=canvas)
+
+canvas.itemconfig(alone_ball._canvas_ball, fill='yellow')
+
 wall_list = [
-    Wall(0, 0, w, 0),
-    Wall(0, 0, 0, h),
-    Wall(0, h, w, h),
-    Wall(w, 0, w, h)
+    Wall(100, 100, w - 100, 100, canvas),
+    Wall(100, 100, 100, h - 100, canvas),
+    Wall(100, h - 100, w - 100, h - 100, canvas),
+    Wall(w - 100, 100, w - 100, h - 100, canvas),
+    Wall(w / 2, h - 100, 100, h / 2, canvas)
 ]
 
+my_sys = System(wall_list, [alone_ball], k, mu, 1, canvas)
+
 canvas.pack()
-redraw_ball(alone_ball)
+redraw_ball(just_the_same_ball)
+my_sys.start()
 master.mainloop()
